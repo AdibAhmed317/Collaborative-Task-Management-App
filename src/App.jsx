@@ -6,6 +6,7 @@ import Registration from './pages/Auth/Registration';
 import Profile from './pages/Client/Profile';
 import Task from './pages/Client/Task';
 import Team from './pages/Client/Team';
+import Dashboard from './pages/Client/Dashboard';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path='/profile' element={<Profile />} />
         <Route path='/task' element={<Task />} />
         <Route path='/teams' element={<Team />} />
+        <Route path='/dashboard' element={<Dashboard />} />
       </Routes>
     </>
   );

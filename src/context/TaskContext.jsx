@@ -8,7 +8,6 @@ export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const taskStorageKey = 'tasks';
 
-  // Load tasks from local storage when the component mounts
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem(taskStorageKey));
     if (storedTasks) {
@@ -16,7 +15,6 @@ export const TaskProvider = ({ children }) => {
     }
   }, []);
 
-  // Save tasks to local storage whenever the tasks array changes
   useEffect(() => {
     localStorage.setItem(taskStorageKey, JSON.stringify(tasks));
   }, [tasks]);
