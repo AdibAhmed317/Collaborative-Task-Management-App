@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTaskContext } from '../../context/TaskContext';
-
 import DatePicker from 'react-datepicker';
 import Navbar from '../../components/Navbar';
-
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 
@@ -36,10 +34,12 @@ const Task = () => {
     dueDate: new Date(),
     teamName: '',
     status: 'pending',
-    createdBy: JSON.parse(localStorage.getItem('authenticatedUser')).username,
+    createdBy: authenticatedUser.username,
   });
 
   const [validationError, setValidationError] = useState('');
+  const [userTeams, setUserTeams] = useState([]);
+  const [teamNames, setTeamNames] = useState([]);
 
   const handleCreateTask = () => {
     if (!task.title || !task.teamName || !task.description) {
@@ -56,7 +56,7 @@ const Task = () => {
       dueDate: new Date(),
       teamName: '',
       status: 'pending',
-      createdBy: JSON.parse(localStorage.getItem('authenticatedUser')).username,
+      createdBy: authenticatedUser.username,
     });
     setValidationError('');
     window.location.reload();
@@ -64,27 +64,44 @@ const Task = () => {
 
   useEffect(() => {
     getAllTask();
+    getUserTeams();
+    getTeamNamesFromLocalStorage();
   }, []);
 
   const getAllTask = () => {
     try {
       const tasks = JSON.parse(localStorage.getItem('tasks'));
       setAllTask(tasks);
-
-      console.log(tasks);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleDelete = (taskId) => {
-    deleteTask(taskId);
+  const getUserTeams = () => {
+    const teams = JSON.parse(localStorage.getItem('teams')) || [];
+    const userTeams = teams.filter((team) =>
+      team.members.includes(authenticatedUser.username)
+    );
+    setUserTeams(userTeams);
+  };
+
+  const getTeamNamesFromLocalStorage = () => {
+    const teams = JSON.parse(localStorage.getItem('teams')) || [];
+    const names = teams.map((team) => team.name);
+    setTeamNames(names);
+  };
+
+  const handleDelete = (taskTitle) => {
+    deleteTask(taskTitle);
   };
 
   return (
     <>
       <Navbar />
       <div className='p-4 border border-gray-300 rounded-lg shadow-md'>
+        <h2 className='text-xl font-semibold mb-4'>
+          Logged in as {authenticatedUser.username}
+        </h2>
         <h2 className='text-xl font-semibold mb-4'>Create Task</h2>
         <input
           className='w-full border border-gray-300 rounded-md px-3 py-2 mb-4'
@@ -125,14 +142,20 @@ const Task = () => {
             className='w-full border border-gray-300 rounded-md px-3 py-2'
           />
         </div>
-        <input
+        <select
           className='w-full border border-gray-300 rounded-md px-3 py-2 mb-4'
-          type='text'
-          placeholder='Team Name'
           value={task.teamName}
           onChange={(e) => setTask({ ...task, teamName: e.target.value })}
-          required
-        />
+          required>
+          <option value='' disabled>
+            Select Team
+          </option>
+          {teamNames.map((name, index) => (
+            <option key={index} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
         <div className='text-red-500 text-sm'>{validationError}</div>
         <button
           onClick={handleCreateTask}
@@ -140,7 +163,7 @@ const Task = () => {
           Create Task
         </button>
 
-        <h2 className='text-xl font-semibold mt-10 mb-4'>All Tasks</h2>
+        <h2 className='text-xl font-semibold mt-10 mb-4'>Your Tasks</h2>
         <div className='overflow-x-auto'>
           <table className='min-w-full bg-white rounded-lg overflow-hidden'>
             <thead className='bg-gray-200 text-gray-700'>
@@ -155,35 +178,39 @@ const Task = () => {
               </tr>
             </thead>
             <tbody className='text-gray-600 text-center'>
-              {allTask.map((item, index) => (
-                <tr
-                  key={index}
-                  className='hover:bg-gray-100 transition duration-300 ease-in-out'>
-                  <td className='py-3 px-4'>{item.title}</td>
-                  <td className='py-3 px-4'>{item.description}</td>
-                  <td className='py-3 px-4'>{item.priority}</td>
-                  <td className='py-3 px-4'>{item.dueDate}</td>
-                  <td className='py-3 px-4'>{item.teamName}</td>
-                  <td className='py-3 px-4'>{item.status}</td>
-                  <td className='py-3 px-4 flex flex-col'>
-                    <button
-                      className='text-green-500 hover:underline'
-                      onClick={() => updateTask(item.id, 'completed')}>
-                      Mark as Complete
-                    </button>
-                    <button
-                      className='text-yellow-500 hover:underline'
-                      onClick={() => updateTask(item.id, 'in progress')}>
-                      Mark as In Progress
-                    </button>
-                    <button
-                      className='text-red-500 hover:underline'
-                      onClick={() => handleDelete(item.title)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {allTask
+                .filter((task) =>
+                  userTeams.some((team) => team.name === task.teamName)
+                )
+                .map((item, index) => (
+                  <tr
+                    key={index}
+                    className='hover:bg-gray-100 transition duration-300 ease-in-out'>
+                    <td className='py-3 px-4'>{item.title}</td>
+                    <td className='py-3 px-4'>{item.description}</td>
+                    <td className='py-3 px-4'>{item.priority}</td>
+                    <td className='py-3 px-4'>{item.dueDate}</td>
+                    <td className='py-3 px-4'>{item.teamName}</td>
+                    <td className='py-3 px-4'>{item.status}</td>
+                    <td className='py-3 px-4 flex flex-col'>
+                      <button
+                        className='text-green-500 hover:underline'
+                        onClick={() => updateTask(item.title, 'completed')}>
+                        Mark as Complete
+                      </button>
+                      <button
+                        className='text-yellow-500 hover:underline'
+                        onClick={() => updateTask(item.title, 'in progress')}>
+                        Mark as In Progress
+                      </button>
+                      <button
+                        className='text-red-500 hover:underline'
+                        onClick={() => handleDelete(item.title)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

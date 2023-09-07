@@ -12,13 +12,14 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const storedUser = localStorage.getItem(username);
-    if (!storedUser) {
+    const existingUserList = JSON.parse(localStorage.getItem('userList')) || [];
+
+    const user = existingUserList.find((user) => user.username === username);
+
+    if (!user) {
       setError('User not found. Please register.');
       return;
     }
-
-    const user = JSON.parse(storedUser);
 
     if (user.password !== password) {
       setError('Incorrect password. Please try again.');

@@ -26,16 +26,23 @@ export const TaskProvider = ({ children }) => {
   };
 
   const updateTask = (taskId, newStatus) => {
+    try {
+      const updatedTasks = JSON.parse(localStorage.getItem('tasks')).map(
+        (task) =>
+          task.title === taskId ? { ...task, status: newStatus } : task
+      );
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.log(error);
+    }
     window.location.reload();
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, status: newStatus } : task
-    );
-    setTasks(updatedTasks);
   };
 
   const deleteTask = (taskTitle) => {
     const updatedTasks = tasks.filter((task) => task.title !== taskTitle);
     setTasks(updatedTasks);
+    window.location.reload();
   };
 
   return (

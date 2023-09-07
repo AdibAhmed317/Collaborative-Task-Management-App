@@ -29,7 +29,9 @@ const Registration = () => {
   };
 
   const handleRegistration = (username, password, bio, profilePicture) => {
-    if (users.some((user) => user.username === username)) {
+    const existingUserList = JSON.parse(localStorage.getItem('userList')) || [];
+
+    if (existingUserList.some((user) => user.username === username)) {
       alert('Username already exists. Please choose another username.');
       return;
     }
@@ -37,8 +39,11 @@ const Registration = () => {
     // Create a new user object
     const newUser = { username, password, bio, profilePicture };
 
-    setUsers([...users, newUser]);
-    localStorage.setItem(username, JSON.stringify(newUser));
+    // Add the new user to the existing user list
+    const updatedUserList = [...existingUserList, newUser];
+
+    // Update the "userList" in local storage
+    localStorage.setItem('userList', JSON.stringify(updatedUserList));
 
     alert('Registration successful!');
     navigate('/');
