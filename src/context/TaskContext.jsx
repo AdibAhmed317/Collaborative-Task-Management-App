@@ -25,9 +25,10 @@ export const TaskProvider = ({ children }) => {
     setTasks([...tasks, newTask]);
   };
 
-  const updateTask = (taskId, updatedTask) => {
+  const updateTask = (taskId, newStatus) => {
+    window.location.reload();
     const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? updatedTask : task
+      task.id === taskId ? { ...task, status: newStatus } : task
     );
     setTasks(updatedTasks);
   };

@@ -5,9 +5,28 @@ import DatePicker from 'react-datepicker';
 import Navbar from '../../components/Navbar';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { Link } from 'react-router-dom';
 
 const Task = () => {
-  const { createTask, deleteTask } = useTaskContext();
+  const authenticatedUser = JSON.parse(
+    localStorage.getItem('authenticatedUser')
+  );
+
+  if (!authenticatedUser || !authenticatedUser.username) {
+    return (
+      <>
+        <Navbar />
+        <div className='text-center mt-10'>
+          Login First
+          <Link className='p-5 bg-blue-300 rounded-xl ml-10' to='/'>
+            Go back
+          </Link>
+        </div>
+      </>
+    );
+  }
+
+  const { createTask, deleteTask, updateTask } = useTaskContext();
 
   const [allTask, setAllTask] = useState([]);
   const [task, setTask] = useState({
@@ -135,7 +154,7 @@ const Task = () => {
                 <th className='py-3 px-4 font-semibold text-sm'>Actions</th>
               </tr>
             </thead>
-            <tbody className='text-gray-600'>
+            <tbody className='text-gray-600 text-center'>
               {allTask.map((item, index) => (
                 <tr
                   key={index}
@@ -146,11 +165,16 @@ const Task = () => {
                   <td className='py-3 px-4'>{item.dueDate}</td>
                   <td className='py-3 px-4'>{item.teamName}</td>
                   <td className='py-3 px-4'>{item.status}</td>
-                  <td className='py-3 px-4'>
+                  <td className='py-3 px-4 flex flex-col'>
                     <button
-                      className='text-blue-500 hover:underline mr-2'
-                      onClick={() => handleEdit(item)}>
-                      Edit
+                      className='text-green-500 hover:underline'
+                      onClick={() => updateTask(item.id, 'completed')}>
+                      Mark as Complete
+                    </button>
+                    <button
+                      className='text-yellow-500 hover:underline'
+                      onClick={() => updateTask(item.id, 'in progress')}>
+                      Mark as In Progress
                     </button>
                     <button
                       className='text-red-500 hover:underline'
