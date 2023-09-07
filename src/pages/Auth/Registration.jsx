@@ -15,25 +15,20 @@ const Registration = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate the form fields (add more validation as needed)
     if (!username || !password) {
       setError('Please fill in all fields.');
       return;
     }
 
-    // Call the handleRegistration function to handle user registration
     handleRegistration(username, password, bio, profilePicture);
 
-    // Clear form fields
     setUsername('');
     setPassword('');
     setBio('');
-    setProfilePicture(null); // Reset the profile picture
+    setProfilePicture(null);
   };
 
-  // Handle user registration and store data in local storage
   const handleRegistration = (username, password, bio, profilePicture) => {
-    // Check if the username already exists
     if (users.some((user) => user.username === username)) {
       alert('Username already exists. Please choose another username.');
       return;
@@ -42,7 +37,6 @@ const Registration = () => {
     // Create a new user object
     const newUser = { username, password, bio, profilePicture };
 
-    // Update the state and store user data in local storage
     setUsers([...users, newUser]);
     localStorage.setItem(username, JSON.stringify(newUser));
 

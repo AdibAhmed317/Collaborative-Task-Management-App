@@ -1,15 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-// Create a context for tasks
 const TaskContext = createContext();
 
-// Custom hook to access the task context
 export const useTaskContext = () => useContext(TaskContext);
 
-// Task context provider component
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
-  const taskStorageKey = 'tasks'; // Key for local storage
+  const taskStorageKey = 'tasks';
 
   // Load tasks from local storage when the component mounts
   useEffect(() => {
@@ -24,12 +21,10 @@ export const TaskProvider = ({ children }) => {
     localStorage.setItem(taskStorageKey, JSON.stringify(tasks));
   }, [tasks]);
 
-  // Function to create a new task and add it to the tasks array
   const createTask = (newTask) => {
     setTasks([...tasks, newTask]);
   };
 
-  // Function to update an existing task by its ID
   const updateTask = (taskId, updatedTask) => {
     const updatedTasks = tasks.map((task) =>
       task.id === taskId ? updatedTask : task
@@ -37,13 +32,11 @@ export const TaskProvider = ({ children }) => {
     setTasks(updatedTasks);
   };
 
-  // Function to delete a task by its ID
-  const deleteTask = (taskId) => {
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+  const deleteTask = (taskTitle) => {
+    const updatedTasks = tasks.filter((task) => task.title !== taskTitle);
     setTasks(updatedTasks);
   };
 
-  // Provide the task context to child components
   return (
     <TaskContext.Provider value={{ tasks, createTask, updateTask, deleteTask }}>
       {children}

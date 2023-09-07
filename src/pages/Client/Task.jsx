@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTaskContext } from '../../context/TaskContext';
+
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import Navbar from '../../components/Navbar';
 
+import 'react-datepicker/dist/react-datepicker.css';
+
 const Task = () => {
-  const { createTask } = useTaskContext();
+  const { createTask, deleteTask } = useTaskContext();
+
+  const [allTask, setAllTask] = useState([]);
   const [task, setTask] = useState({
     title: '',
     description: '',
@@ -19,12 +23,11 @@ const Task = () => {
   const [validationError, setValidationError] = useState('');
 
   const handleCreateTask = () => {
-    if (!task.title || !task.teamName) {
+    if (!task.title || !task.teamName || !task.description) {
       setValidationError('Please fill in all required fields.');
       return;
     }
 
-    // Call the createTask function from the context to add the task
     createTask(task);
 
     setTask({
@@ -37,6 +40,26 @@ const Task = () => {
       createdBy: JSON.parse(localStorage.getItem('authenticatedUser')).username,
     });
     setValidationError('');
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    getAllTask();
+  }, []);
+
+  const getAllTask = () => {
+    try {
+      const tasks = JSON.parse(localStorage.getItem('tasks'));
+      setAllTask(tasks);
+
+      console.log(tasks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = (taskId) => {
+    deleteTask(taskId);
   };
 
   return (
@@ -97,6 +120,49 @@ const Task = () => {
           className='bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md'>
           Create Task
         </button>
+
+        <h2 className='text-xl font-semibold mt-10 mb-4'>All Tasks</h2>
+        <div className='overflow-x-auto'>
+          <table className='min-w-full bg-white rounded-lg overflow-hidden'>
+            <thead className='bg-gray-200 text-gray-700'>
+              <tr>
+                <th className='py-3 px-4 font-semibold text-sm'>Title</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Description</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Priority</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Due Date</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Team Name</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Status</th>
+                <th className='py-3 px-4 font-semibold text-sm'>Actions</th>
+              </tr>
+            </thead>
+            <tbody className='text-gray-600'>
+              {allTask.map((item, index) => (
+                <tr
+                  key={index}
+                  className='hover:bg-gray-100 transition duration-300 ease-in-out'>
+                  <td className='py-3 px-4'>{item.title}</td>
+                  <td className='py-3 px-4'>{item.description}</td>
+                  <td className='py-3 px-4'>{item.priority}</td>
+                  <td className='py-3 px-4'>{item.dueDate}</td>
+                  <td className='py-3 px-4'>{item.teamName}</td>
+                  <td className='py-3 px-4'>{item.status}</td>
+                  <td className='py-3 px-4'>
+                    <button
+                      className='text-blue-500 hover:underline mr-2'
+                      onClick={() => handleEdit(item)}>
+                      Edit
+                    </button>
+                    <button
+                      className='text-red-500 hover:underline'
+                      onClick={() => handleDelete(item.title)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
