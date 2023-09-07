@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Registration = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [bio, setBio] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
   const [error, setError] = useState('');
-
-  // Define state for users and current user
   const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,16 +22,17 @@ const Registration = () => {
     }
 
     // Call the handleRegistration function to handle user registration
-    handleRegistration(username, password, bio);
+    handleRegistration(username, password, bio, profilePicture);
 
     // Clear form fields
     setUsername('');
     setPassword('');
     setBio('');
+    setProfilePicture(null); // Reset the profile picture
   };
 
   // Handle user registration and store data in local storage
-  const handleRegistration = (username, password, bio) => {
+  const handleRegistration = (username, password, bio, profilePicture) => {
     // Check if the username already exists
     if (users.some((user) => user.username === username)) {
       alert('Username already exists. Please choose another username.');
@@ -38,16 +40,26 @@ const Registration = () => {
     }
 
     // Create a new user object
-    const newUser = { username, password, bio };
+    const newUser = { username, password, bio, profilePicture };
 
     // Update the state and store user data in local storage
     setUsers([...users, newUser]);
     localStorage.setItem(username, JSON.stringify(newUser));
 
-    // Set the current user
-    setCurrentUser(newUser);
-
     alert('Registration successful!');
+    navigate('/');
+  };
+
+  // Handle profile picture selection
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfilePicture(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -103,6 +115,20 @@ const Registration = () => {
               className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
             />
           </div>
+          <div className='mb-4'>
+            <label
+              htmlFor='profilePicture'
+              className='block text-gray-700 text-sm font-bold mb-2'>
+              Profile Picture
+            </label>
+            <input
+              type='file'
+              id='profilePicture'
+              accept='image/*'
+              onChange={handleProfilePictureChange}
+              className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            />
+          </div>
           <div className='text-red-500 text-xs italic'>{error}</div>
           <div className='flex items-center justify-between'>
             <button
@@ -111,6 +137,7 @@ const Registration = () => {
               Register
             </button>
           </div>
+          <Link to='/'>Login</Link>
         </form>
       </div>
     </>

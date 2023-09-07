@@ -6,12 +6,12 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Simulated authentication logic using local storage
     const storedUser = localStorage.getItem(username);
     if (!storedUser) {
       setError('User not found. Please register.');
@@ -25,12 +25,9 @@ const Login = () => {
       return;
     }
 
-    // Set the authenticated user in your application state or context
-    // For this example, we'll simulate setting the user in local storage
     localStorage.setItem('authenticatedUser', JSON.stringify(user));
 
-    // Redirect to the authenticated user's dashboard or any other route
-    navigate('/register');
+    navigate('/profile');
   };
 
   return (
