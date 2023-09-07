@@ -50,7 +50,6 @@ const Registration = () => {
     navigate('/');
   };
 
-  // Handle profile picture selection
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {

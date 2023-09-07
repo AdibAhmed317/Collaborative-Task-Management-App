@@ -1,7 +1,6 @@
-// UserProfile.js
-
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -15,7 +14,17 @@ const Profile = () => {
   }, []);
 
   if (!user) {
-    return <div className='text-center mt-4'>Login First...</div>;
+    return (
+      <>
+        <Navbar />
+        <div className='text-center mt-10'>
+          Login First
+          <Link className='p-5 bg-blue-300 rounded-xl ml-10' to='/'>
+            Go back
+          </Link>
+        </div>
+      </>
+    );
   }
 
   return (
