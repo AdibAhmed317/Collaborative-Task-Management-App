@@ -1,8 +1,6 @@
 # Task Management App
 
-![App Screenshot](screenshot.png)
-
-This is a simple task management web application built with React. It allows users to create tasks, manage their teams, and track task progress.
+This is a simple collaborative task management web application built with React. It allows users to create tasks, manage their teams, and track task progress.
 
 ## Features
 
@@ -18,7 +16,7 @@ This is a simple task management web application built with React. It allows use
 - React.js
 - React Router
 - LocalStorage (for data persistence)
-- CSS for styling
+- TailwindCSS for styling
 
 ## Getting Started
 
