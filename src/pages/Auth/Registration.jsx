@@ -135,7 +135,9 @@ const Registration = () => {
               Register
             </button>
           </div>
-          <Link to='/'>Login</Link>
+          <div className='mt-5 text-blue-500'>
+            <Link to='/'>Login</Link>
+          </div>
         </form>
       </div>
     </>

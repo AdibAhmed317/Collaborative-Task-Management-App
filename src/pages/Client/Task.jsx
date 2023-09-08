@@ -17,7 +17,7 @@ const Task = () => {
         <div className='text-center mt-10'>
           Login First
           <Link className='p-5 bg-blue-300 rounded-xl ml-10' to='/'>
-            Go back
+            Go back to Login Page
           </Link>
         </div>
       </>
@@ -95,13 +95,29 @@ const Task = () => {
     deleteTask(taskTitle);
   };
 
+  function formatDateString(timestamp) {
+    const date = new Date(timestamp);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+
+    return `${year}-${month}-${day} ${formattedHours}:${minutes} ${ampm}`;
+  }
+
   return (
     <>
       <Navbar />
       <div className='p-4 border border-gray-300 rounded-lg shadow-md'>
-        <h2 className='text-xl font-semibold mb-4'>
+        <h2 className='text-xl font-medium mb-4'>
           Logged in as {authenticatedUser.username}
         </h2>
+        <h2 className='text-4xl font-semibold mb-4'>Team Based Task List</h2>
         <h2 className='text-xl font-semibold mb-4'>Create Task</h2>
         <input
           className='w-full border border-gray-300 rounded-md px-3 py-2 mb-4'
@@ -148,7 +164,7 @@ const Task = () => {
           onChange={(e) => setTask({ ...task, teamName: e.target.value })}
           required>
           <option value='' disabled>
-            Select Team
+            Select Team (create new team if there isn't any)
           </option>
           {teamNames.map((name, index) => (
             <option key={index} value={name}>
@@ -189,7 +205,9 @@ const Task = () => {
                     <td className='py-3 px-4'>{item.title}</td>
                     <td className='py-3 px-4'>{item.description}</td>
                     <td className='py-3 px-4'>{item.priority}</td>
-                    <td className='py-3 px-4'>{item.dueDate}</td>
+                    <td className='py-3 px-4'>
+                      {formatDateString(item.dueDate)}
+                    </td>
                     <td className='py-3 px-4'>{item.teamName}</td>
                     <td className='py-3 px-4'>{item.status}</td>
                     <td className='py-3 px-4 flex flex-col'>

@@ -15,14 +15,14 @@ const Dashboard = () => {
         <div className='text-center mt-10'>
           Login First
           <Link className='p-5 bg-blue-300 rounded-xl ml-10' to='/'>
-            Go back
+            Go back to Login Page
           </Link>
         </div>
       </>
     );
   }
 
-  const { tasks, updateTask, deleteTask } = useTaskContext();
+  const { tasks, updateTask } = useTaskContext();
 
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
@@ -45,13 +45,30 @@ const Dashboard = () => {
     return 0;
   });
 
+  function formatDateString(timestamp) {
+    const date = new Date(timestamp);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+
+    return `${year}-${month}-${day} ${formattedHours}:${minutes} ${ampm}`;
+  }
+
   return (
     <>
       <Navbar />
-      <h2 className='text-xl font-semibold mt-10 mb-4 p-5'>
+      <h2 className='text-xl font-medium mt-10 mb-4 p-5'>
         Logged in as {authenticatedUser.username}
       </h2>
-
+      <h2 className='text-4xl font-semibold mt-10 mb-4 p-5'>
+        Summary of All Tasks
+      </h2>
       <div className='mb-4 p-5'>
         <label className='block text-sm font-semibold' htmlFor='filterStatus'>
           Filter by Status:
@@ -67,7 +84,6 @@ const Dashboard = () => {
           <option value='pending'>Pending</option>
         </select>
       </div>
-
       <div className='mb-4 p-5'>
         <label className='block text-sm font-semibold' htmlFor='filterPriority'>
           Filter by Priority:
@@ -83,7 +99,6 @@ const Dashboard = () => {
           <option value='high'>High</option>
         </select>
       </div>
-
       <button
         onClick={() => setSortByDueDate('desc')}
         className='bg-green-500 hover:bg-green-600 text-white font-semibold px-2 py-2 rounded-md m-2'>
@@ -94,7 +109,6 @@ const Dashboard = () => {
         className='bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2 py-2 rounded-md m-2'>
         Sort by Due Date (Low to High)
       </button>
-
       <h2 className='text-xl font-semibold mt-4 mb-2 p-5'>All Tasks</h2>
       <div className='overflow-x-auto'>
         <table className='min-w-full bg-white rounded-lg overflow-hidden'>
@@ -117,7 +131,7 @@ const Dashboard = () => {
                 <td className='py-3 px-4'>{item.title}</td>
                 <td className='py-3 px-4'>{item.description}</td>
                 <td className='py-3 px-4'>{item.priority}</td>
-                <td className='py-3 px-4'>{item.dueDate}</td>
+                <td className='py-3 px-4'> {formatDateString(item.dueDate)}</td>
                 <td className='py-3 px-4'>{item.teamName}</td>
                 <td className='py-3 px-4'>{item.status}</td>
                 <td className='py-3 px-4 flex flex-col'>
@@ -130,11 +144,6 @@ const Dashboard = () => {
                     className='text-yellow-500 hover:underline'
                     onClick={() => updateTask(item.title, 'in progress')}>
                     Mark as In Progress
-                  </button>
-                  <button
-                    className='text-red-500 hover:underline'
-                    onClick={() => deleteTask(item.title)}>
-                    Delete
                   </button>
                 </td>
               </tr>

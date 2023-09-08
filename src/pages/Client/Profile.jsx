@@ -20,7 +20,7 @@ const Profile = () => {
         <div className='text-center mt-10'>
           Login First
           <Link className='p-5 bg-blue-300 rounded-xl ml-10' to='/'>
-            Go back
+            Go back to Login Page
           </Link>
         </div>
       </>

@@ -77,7 +77,9 @@ const Login = () => {
             </button>
           </div>
           <div className='text-red-500 text-xs italic'>{error}</div>
-          <Link to='/register'>Register</Link>
+          <div className='mt-5 text-blue-500'>
+            <Link to='/register'>Register</Link>
+          </div>
         </form>
       </div>
     </>

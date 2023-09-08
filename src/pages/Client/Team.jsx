@@ -44,7 +44,7 @@ const Team = () => {
     const newTeam = {
       name: teamName,
       createdBy: authenticatedUser.username,
-      members: selectedUsers, // Include selected users in the team
+      members: selectedUsers,
     };
 
     const teams = JSON.parse(localStorage.getItem('teams')) || [];
@@ -104,7 +104,7 @@ const Team = () => {
           Create Team
         </button>
 
-        <h2 className='text-xl font-semibold mt-10 mb-4'>Your Teams</h2>
+        <h2 className='text-xl font-semibold mt-10 mb-4'>My Teams</h2>
         <ul>
           {userTeams.map((team) => (
             <li key={team.name}>{team.name}</li>
